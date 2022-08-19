@@ -1,12 +1,9 @@
  # Order Management - Siesta
 
-------------------
 Order Management is `Spring Boot` based `Micro Service` to orchestrate the life cycle of order for products
 
-```
-Primary Contact:
-Ashish Raj | rajs22007@gmail.com @@
-```
+#### Primary Contact:
+Ashish Raj | [Email](mailto:rajs22007@gmail.com?subject=[GitHub]%20Repository%20order%20management) | [Linkedin](https://www.linkedin.com/in/rajs22007/)
 
 #### Github :- [Order Management - Siesta](https://github.com/rajs22007/order-management)
 - Clone the project, open in IDE and run the spring boot application.
@@ -20,7 +17,6 @@ Ashish Raj | rajs22007@gmail.com @@
 
 ## Issues under analysis
 
--------------
 [#All Open Issues - /order-management/issues](https://github.com/rajs22007/order-management/issues)
 
 | Issues     | Status | Assignee     | Link                                                                                                |
@@ -39,12 +35,10 @@ Ashish Raj | rajs22007@gmail.com @@
 
 ## API Specifications:
 
--------------
 `Initial Mock API documentation under process`
 
 ## Historical events
 
--------------
 ### 18 August 2022
 - Initial Project Setup with mock api for Product.
 - Initial issues created.
