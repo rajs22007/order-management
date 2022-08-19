@@ -2,110 +2,91 @@ package com.flexi.siesta.ordermanagement.product;
 
 import com.flexi.siesta.ordermanagement.common.MetaData;
 import com.flexi.siesta.ordermanagement.common.MetaRepository;
+import com.flexi.siesta.ordermanagement.exception.ImageNotFoundException;
+import com.flexi.siesta.ordermanagement.exception.ProductNotFoundException;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Product Service deals with product lifecycle,
+ * including all CRUD operation with future scope of
+ * filters support, caching techniques, catalog binding etc
+ */
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final MetaRepository metaRepository;
-    private final ObjectFactory<ProductResponse> productResponseObjectFactory;
-    private final ObjectFactory<Product> productObjectFactory;
-    private final ObjectFactory<MetaData> metaDataObjectFactory;
+    private final ProductMapper productMapper;
+
 
     @Autowired
-    public ProductService(ProductRepository productRepository, MetaRepository metaRepository, ObjectFactory<ProductResponse> productResponseObjectFactory, ObjectFactory<Product> productObjectFactory, ObjectFactory<MetaData> metaDataObjectFactory) {
+    public ProductService(ProductRepository productRepository, MetaRepository metaRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.metaRepository = metaRepository;
-        this.productResponseObjectFactory = productResponseObjectFactory;
-        this.productObjectFactory = productObjectFactory;
-        this.metaDataObjectFactory = metaDataObjectFactory;
+        this.productMapper = productMapper;
     }
 
+    /**
+     * @return Fetches all the products along with media links
+     */
     public List<ProductResponse> getProducts() {
-        return productRepository.findAll().stream().map(this::productResponseMapper).collect(Collectors.toList());
+        return productRepository.findAll().stream().map(product -> {
+            ProductResponse productResponse = productMapper.toProductResponse(product);
+            if (product.getHasMetaData()) {
+                List<String> allIdByMetaId = metaRepository.findIdByMetaId(product.getProductCode());
+                productResponse.setProductImage(productMapper.toImageURIs(allIdByMetaId, product.getProductCode()));
+            }
+            return productResponse;
+        }).collect(Collectors.toList());
     }
 
-    private ProductResponse productResponseMapper(Product product) {
-        ProductResponse productResponse = productResponseObjectFactory.getObject();
-        BeanUtils.copyProperties(product, productResponse);
-        BeanUtils.copyProperties(product, productResponse.getAudit());
-        if (product.getMetaData()) {
-            List<UUID> allIdByMetaId = metaRepository.findIdByMetaId(product.getProductCode());
-            /*List<URI> uris = allIdByMetaId.stream()
-                    .map(uuid -> URI.create("/siesta/api/product/" + product.getProductCode() + "/image/" + uuid.toString()))
-                    .collect(Collectors.toList());*/
-            List<URI> uris = allIdByMetaId.stream()
-                    .map(uuid -> ServletUriComponentsBuilder.fromCurrentRequest()
-                            .replacePath("/siesta/api/product/{productCode}/image/{imageId}")
-                            .buildAndExpand(product.getProductCode(), uuid.toString())
-                            .toUri())
-                    .collect(Collectors.toList());
-            productResponse.setProductImage(uris);
-        }
-        return productResponse;
+    public ProductResponse getProduct(String productCode) {
+        return productRepository.findOneByProductCode(productCode).map(product -> {
+            ProductResponse productResponse = productMapper.toProductResponse(product);
+            if (product.getHasMetaData()) {
+                List<String> allIdByMetaId = metaRepository.findIdByMetaId(product.getProductCode());
+                productResponse.setProductImage(productMapper.toImageURIs(allIdByMetaId, product.getProductCode()));
+            }
+            return productResponse;
+        }).orElseThrow(() -> new ProductNotFoundException("Product Not Found for productCode=" + productCode));
     }
 
+
+    /**
+     * @param productRequest Product Creation Request with product and attachments
+     * @return returns the product code to be used to generate location of product
+     */
     @Transactional
     public String createProduct(ProductRequest productRequest) {
-        List<MetaData> metaDataList = metaDataMapper(productRequest);
+        List<MetaData> metaDataList = productMapper.metaDataMapper(productRequest);
         Boolean hasMetaData = Boolean.FALSE;
         if (!metaDataList.isEmpty()) {
             metaRepository.saveAllAndFlush(metaDataList);
             hasMetaData = Boolean.TRUE;
         }
-        Product product = productRepository.saveAndFlush(productMapper(productRequest, hasMetaData));
+        Product product = productRepository.saveAndFlush(productMapper.toProduct(productRequest, hasMetaData));
 
         return product.getProductCode();
     }
 
-    public byte[] getImageByProductCodeAndImageId(String productCode, String imageId) {
-        List<MetaData> metaData = metaRepository.findAll();
-        Byte[] data = metaData.stream()
-                .filter(md -> md.getMetaId().equals(productCode)
-                        && md.getId().toString().equals(imageId)).findFirst().map(MetaData::getData)
-                .orElse(ArrayUtils.toObject(new byte[0]));
-        return ArrayUtils.toPrimitive(data);
+    /**
+     * @param productCode product code associated with image
+     * @param imageId     image id for the image
+     * @return Pair of image and fileName
+     */
+    public Pair<byte[], String> getImageByProductCodeAndImageId(String productCode, String imageId) {
+        Optional<MetaData> metaData = metaRepository.findById(imageId);
+        return metaData
+                .map(meta -> Pair.of(ArrayUtils.toPrimitive(meta.getData()), meta.getFileName()))
+                .orElseThrow(() -> new ImageNotFoundException("Image Not Found for productCode=" + productCode + ", imageId=" + imageId));
     }
 
-    private Product productMapper(ProductRequest productRequest, Boolean hasMetaData) {
-        Product product = productObjectFactory.getObject();
-        BeanUtils.copyProperties(productRequest, product);
-        product.setMetaData(hasMetaData);
-        return product;
-    }
-
-    private List<MetaData> metaDataMapper(ProductRequest productRequest) {
-        if (ArrayUtils.isEmpty(productRequest.getProductImages())) {
-            return Collections.emptyList();
-        }
-
-        List<MetaData> metaDataList = new ArrayList<>();
-        for (var image : productRequest.getProductImages()) {
-            MetaData metaData = metaDataObjectFactory.getObject();
-            metaData.setMetaId(productRequest.getProductCode());
-            metaData.setMetaType(productRequest.getProductCategory());
-            try {
-                metaData.setData(ArrayUtils.toObject(image.getBytes()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            metaDataList.add(metaData);
-        }
-        return metaDataList;
-    }
 }

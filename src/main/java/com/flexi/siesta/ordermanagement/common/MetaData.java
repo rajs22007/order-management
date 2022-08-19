@@ -11,17 +11,18 @@ import javax.persistence.Lob;
 import java.util.UUID;
 
 
-@Entity
+@Entity//(name = "METADATA")
 @Getter
 @Setter
 @NoArgsConstructor
 public class MetaData {
     @Id
     @Setter(AccessLevel.PROTECTED)
-    private UUID id = UUID.randomUUID();
+    private String id = UUID.randomUUID().toString();
     private String metaId;
     private String metaType;
     // https://stackoverflow.com/questions/50363639/how-spring-boot-jpahibernate-saves-images
     @Lob
     private Byte[] data;
+    private String fileName;
 }
