@@ -21,10 +21,10 @@ Ashish Raj | [Email](mailto:rajs22007@gmail.com?subject=[GitHub]%20Repository%20
 
 | Issues     | Status | Assignee     | Link                                                                                                |
 |------------|--------|--------------|-----------------------------------------------------------------------------------------------------|
-| Siesta #01 | `OPEN` | `ASHISH`     | [Data modeling](https://github.com/rajs22007/order-management/issues/1)                             |
+| Siesta #01 | `IN PROGRESS` | `ASHISH`     | [Data modeling](https://github.com/rajs22007/order-management/issues/1)                             |
 | Siesta #02 | `OPEN` | `UNASSIGNED` | [Architecture brain-storm](https://github.com/rajs22007/order-management/issues/2)                  |
 | Siesta #03 | `OPEN` | `ASHISH`     | [Finalize tech stacks](https://github.com/rajs22007/order-management/issues/3)                      |
-| Siesta #04 | `OPEN` | `UNASSIGNED` | [Mock APIs for prototype development](https://github.com/rajs22007/order-management/issues/4)       |
+| Siesta #04 | `IN PROGRESS` | `ASHISH` | [Mock APIs for prototype development](https://github.com/rajs22007/order-management/issues/4)       |
 | Siesta #05 | `OPEN` | `UNASSIGNED` | [Blueprint design for presentation.](https://github.com/rajs22007/order-management/issues/5)        |
 | Siesta #06 | `OPEN` | `UNASSIGNED` | [Entity definitions and relationships](https://github.com/rajs22007/order-management/issues/6)      |
 | Siesta #07 | `OPEN` | `UNASSIGNED` | [Product Catalogue Configurations](https://github.com/rajs22007/order-management/issues/7)          |
@@ -52,3 +52,6 @@ Ashish Raj | [Email](mailto:rajs22007@gmail.com?subject=[GitHub]%20Repository%20
 - Enable Product search based on `productCode`
 - Default mapping capability added. Open for Future scope of framework based mapper
 -  In memory H2 db is supported at present, open for integration `MariaDB/ Postgres/ MongoDB`
+
+### 23 August 2022
+- Package restructuring.
