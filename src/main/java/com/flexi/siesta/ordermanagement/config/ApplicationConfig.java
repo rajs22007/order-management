@@ -1,9 +1,9 @@
 package com.flexi.siesta.ordermanagement.config;
 
-import com.flexi.siesta.ordermanagement.common.AuditInfoResponse;
-import com.flexi.siesta.ordermanagement.common.MetaData;
-import com.flexi.siesta.ordermanagement.product.Product;
-import com.flexi.siesta.ordermanagement.product.ProductResponse;
+import com.flexi.siesta.ordermanagement.dto.AuditInfoResponse;
+import com.flexi.siesta.ordermanagement.entity.MetaData;
+import com.flexi.siesta.ordermanagement.entity.Product;
+import com.flexi.siesta.ordermanagement.dto.ProductResponse;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
