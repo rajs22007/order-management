@@ -1,6 +1,0 @@
-package com.flexi.siesta.ordermanagement.enums;
-
-public enum OrderStatus {
-    ORDER_DRAFTED, ORDER_PLACED, ORDER_SHIPPED, ORDER_OUT_OF_DELIVERY, ORDER_DELIVERED, ORDER_CANCELLED, ORDER_REJECTED,
-    ORDER_IN_PROGRESS
-}
