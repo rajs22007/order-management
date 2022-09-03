@@ -13,7 +13,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "roles")
+@Table(name = "roles", schema = "siesta_service_db")
 public class Role {
     @Id
     @Setter(AccessLevel.PROTECTED)

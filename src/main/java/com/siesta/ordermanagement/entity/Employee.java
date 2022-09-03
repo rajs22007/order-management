@@ -10,10 +10,11 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
+@Table(name = "employees", schema = "siesta_service_db")
 public class Employee implements Serializable {
     @Id
     @Setter(AccessLevel.PROTECTED)

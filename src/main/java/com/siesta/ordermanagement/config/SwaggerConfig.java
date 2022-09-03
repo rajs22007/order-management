@@ -26,7 +26,7 @@ public class SwaggerConfig {
 
     @Bean
     public GroupedOpenApi storeOpenApi() {
-        String paths[] = {"/siesta/**"};
+        String paths[] = {"/api/**"};
         return GroupedOpenApi.builder().group("siesta").pathsToMatch(paths)
                 .build();
     }

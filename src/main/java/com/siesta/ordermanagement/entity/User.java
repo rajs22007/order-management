@@ -11,12 +11,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "users",
+        schema = "siesta_service_db",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
@@ -24,7 +26,7 @@ import java.util.Set;
 public class User {
     @Id
     @Setter(AccessLevel.PROTECTED)
-    private String id;
+    private String id = UUID.randomUUID().toString();
 
     @NotBlank
     @Size(max = 20)
@@ -39,8 +41,9 @@ public class User {
     @Size(max = 120)
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
+            schema = "siesta_service_db",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();

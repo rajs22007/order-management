@@ -8,13 +8,15 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.Table;
 import java.util.UUID;
 
 
-@Entity//(name = "METADATA")
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
+@Table(name = "metadata", schema = "siesta_service_db")
 public class MetaData {
     @Id
     @Setter(AccessLevel.PROTECTED)

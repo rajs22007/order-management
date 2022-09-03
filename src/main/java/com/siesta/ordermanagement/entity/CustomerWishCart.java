@@ -7,13 +7,15 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
+@Table(name = "customerWishCarts", schema = "siesta_service_db")
 public class CustomerWishCart implements Serializable {
     @Id
     @Setter(AccessLevel.PROTECTED)

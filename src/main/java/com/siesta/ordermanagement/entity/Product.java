@@ -7,13 +7,15 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
+@Table(name = "products", schema = "siesta_service_db")
 public class Product extends AuditInfo implements Serializable {
     @Id
     @Setter(AccessLevel.PROTECTED)
